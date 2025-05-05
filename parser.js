@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Daily Growth
+// https://yourworklifedesign.blogspot.com/
+// All rights reserved.
+
 // parser.js - SVG解析とデータ変換機能
 
 // SVGをパースしてJSONに変換する関数

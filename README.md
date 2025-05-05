@@ -285,3 +285,11 @@ SVG Adjusterはブラウザベースのアプリケーションで、特別な�
 - **ブラウザ依存の問題**:
   - ブラウザによって一部の機能やパフォーマンスに差異がある可能性
   - 最新のChrome/Firefoxでの使用を推奨
+
+## ライセンス
+個人の範囲でご使用ください。
+```
+Copyright (c) 2025 Daily Growth
+https://yourworklifedesign.blogspot.com/
+All rights reserved.
+```

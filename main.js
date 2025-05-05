@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Daily Growth
+// https://yourworklifedesign.blogspot.com/
+// All rights reserved.
+
 // main.js - メインファイルとイベントリスナーの設定
 
 // 他のモジュールのインポート（モジュール対応環境の場合）

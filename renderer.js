@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Daily Growth
+// https://yourworklifedesign.blogspot.com/
+// All rights reserved.
+
 // renderer.js - 描画とSVG要素操作機能
 
 // JSONをSVGに変換する関数
