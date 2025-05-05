@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Adjuster</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-2xl font-bold mb-4">SVG Adjuster</h1>
+    
+    <!-- 入力セクション -->
+    <div class="mb-4">
+      <h2 class="text-lg font-semibold mb-2">SVGコード貼り付けエリア</h2>
+      <div class="flex">
+        <button 
+         id="clear-button"
+         class="px-4 py-2 bg-green-500 text-black rounded hover:bg-green-600"
+        >
+        🗑️クリア
+        </button>
+        <textarea 
+          id="svg-input"
+          class="flex-1 p-2 border border-gray-300 rounded ml-2 mr-2 font-mono text-sm"
+          rows="10"
+          placeholder="ここにSVGコードを貼り付けてください..."
+        ></textarea>
+        <button 
+          id="parse-button"
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+        🔄SVG解析
+        </button>
+      </div>
+    </div>
+    
+    <!-- エラー表示 -->
+    <div id="error-display" class="p-3 mb-4 bg-red-100 border border-red-400 text-red-700 rounded" style="display: none;"></div>
+    
+    <!-- プレビューとJSONエディター -->
+    <div id="editor-container" class="flex gap-4" style="display: none;">
+      <!-- SVGプレビュー -->
+      <div class="flex-1 p-4 bg-white border border-gray-300 rounded">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold">プレビュー</h2>
+          <div class="flex items-center space-x-2">
+            <label class="inline-flex items-center">
+              <input
+                id="show-grid"
+                type="checkbox"
+                checked
+                class="mr-1"
+              />
+              <span class="text-sm">🪟グリッド表示</span>
+            </label>
+            <select 
+              id="grid-size"
+              class="text-sm p-1 border border-gray-300 rounded"
+            >
+              <option value="25">25px</option>
+              <option value="50" selected>50px</option>
+              <option value="100">100px</option>
+            </select>
+          </div>
+        </div>
+        <div 
+          id="svg-preview"
+          class="bg-gray-50 border border-dashed border-gray-300 rounded p-2 h-64 overflow-auto relative"
+        >
+          <div id="svg-content"></div>
+        </div>
+
+        <div class="mt-2 flex justify-between items-center">
+          <p class="text-sm text-gray-600">要素をクリックして選択してください</p>
+          <div id="element-controls" style="display: none;">
+
+            <div class="flex items-start mb-2">
+              <!-- 左カラム: ラジオボタン -->
+              <div class="flex flex-col mr-4">
+                <label class="inline-flex items-center mb-2">
+                  <input type="radio" name="move-mode" value="single" checked class="mr-1">
+                  <span class="text-sm">1️⃣単一要素のみ</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="move-mode" value="group" class="mr-1">
+                  <span class="text-sm">🔢グループ全体</span>
+                </label>
+              </div>
+              
+              <!-- 中央カラム: 前面/後面移動ボタン -->
+              <div class="flex flex-col ml-4 mr-4">
+                <button 
+                  id="bring-to-front"
+                  class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm mb-2"
+                >
+                ⏫最前面へ移動
+                </button>
+                <button 
+                  id="send-to-back"
+                  class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+                >
+                ⏬最後面へ移動
+                </button>
+              </div>
+              
+              <!-- 右カラム: 方向ボタン -->
+              <div class="flex flex-col items-center">
+                <button id="move-up" class="w-12 h-10 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-lg mb-1">⬆️</button>
+                <div class="flex">
+                  <button id="move-left" class="w-12 h-10 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-lg mr-1">⬅️</button>
+                  <button id="move-right" class="w-12 h-10 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-lg">➡️</button>
+                </div>
+                <button id="move-down" class="w-12 h-10 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-lg mt-1">⬇️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- JSONエディター -->
+      <div class="flex-1 p-4 bg-white border border-gray-300 rounded">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg font-semibold mb-2">JSONデータ</h2>
+          <button 
+          id="json-to-code-button"
+          class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm mr-2"
+          >
+          JSON▶️SVGコード
+          </button>
+          <button 
+          id="save-button"
+          class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+          >
+          📥SVG保存
+          </button>
+        </div>
+
+        <textarea
+          id="json-editor"
+          class="w-full h-64 p-2 border border-gray-300 rounded font-mono text-sm"
+        ></textarea>
+        
+      <!-- 選択された要素の情報 -->
+      <div id="selected-element-info" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded" style="display: none;">
+        <h3 class="font-semibold"></h3>
+        <div class="mt-2">
+          <div class="mt-2">
+            <button id="find-in-json-btn" class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm ml-2">
+              JSONで表示
+            </button>
+          </div>
+        </div>
+        <pre class="text-xs mt-2 bg-white p-2 border border-blue-100 rounded overflow-auto"></pre>
+      </div>
+      </div>
+    </div>
+
+    <!-- サンプルSVG例 -->
+    <div class="mt-4">
+      <h3 class="text-md font-semibold mb-2">サンプル例:</h3>
+      <div class="flex gap-2">
+        <button 
+          id="example-basic"
+          class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+        >
+        🔷基本図形
+        </button>
+        <button 
+          id="example-path"
+          class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+        >
+        🔶パス＆テキスト
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScriptファイルの読み込み -->
+  <script src="parser.js"></script>
+  <script src="renderer.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
