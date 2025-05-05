@@ -1,4 +1,4 @@
-# SVG Adjusterマニュアル
+# SVG Adjuster　ーマニュアルー
 
 ## 背景
 
